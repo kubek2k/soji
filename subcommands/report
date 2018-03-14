@@ -9,6 +9,7 @@ if [ -e $todays_note_file ]; then
   echo
 
   cat $todays_note_file | grep "** start"
+  cat $todays_note_file | grep "** meeting"
   echo
 
   os_x=`uname -a | fgrep -i 'Darwin'`
