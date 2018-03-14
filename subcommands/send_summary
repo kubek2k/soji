@@ -1,0 +1,15 @@
+#!/bin/bash
+
+todays_note_file=`soji note-path log`
+
+if [ -e $todays_note_file ]; then
+  poms=`cat $todays_note_file | grep -i "** start" | wc -l`
+ 
+  temp_file=`mktemp`
+  echo "*Today:*" >> $temp_file
+  cat $todays_note_file | grep -e "** start" -e "** meeting" | sed -e 's/\*\*[^-]*-- / * /' | sed -e 's/ -- [0-9]*.*$//' >> $temp_file
+  nvim $temp_file
+  content=`cat $temp_file`
+  curl -X POST -H "Authorization: Bearer ${SLACK_TOKEN}" -H "Content-Type: application/json" https://slack.com/api/chat.postMessage -d "{\"text\": \"${content}\", \"as_user\": true, \"channel\": \"${SLACK_CHANNEL}\"}"
+  rm $temp_file
+fi
